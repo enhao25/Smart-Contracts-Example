@@ -34,4 +34,17 @@ describe('Inbox', () => {
         const message = await inbox.methods.message().call();
         assert.equal(message, 'Hi there!')
     })
+
+    it("can change the message", async () => {
+        // This will automatically fail if any of the function goes wrong.
+        // Hence, we do not need to write an assert test for send transactions.
+        // Furthermore, the functions only returns the transaction hash which isn't useful for us to check against
+        const messageString = "Bye";
+        await inbox.methods
+            .setMessage(messageString)
+            .send({ from: accounts[0] })
+        // After using setMessage, we then check if the message has been updated similar to the previous it method
+        const message = await inbox.methods.message().call();
+        assert.equal(message, messageString)
+    })
 })
