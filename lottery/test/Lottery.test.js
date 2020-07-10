@@ -89,5 +89,22 @@ describe("Lottery description", () => {
             assert(err);
         }
     })
+
+    it("send money to the winner and reset the player array", async() => {
+        await lottery.methods.enter().send({
+            from: accounts[0],
+            value: web3.utils.toWei('2', 'ether')
+        });
+        // Returns the balance in wei
+        const intialBalance = await web3.eth.getBalance(accounts[0]);
+
+        await lottery.methods.pickWinner().send({from: accounts[0],});
+        
+        const finalBalance = await web3.eth.getBalance(accounts[0]);
+        
+        // Some amount will be lost as gas, hence we can't say that the difference is exactly 2
+        const different = finalBalance - intialBalance;
+        assert(different > web3.utils.toWei('1.8', 'ether'))
+    });
 })
 
