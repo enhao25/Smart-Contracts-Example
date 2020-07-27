@@ -4,6 +4,7 @@ pragma solidity ^0.4.17;
 contract Lottery {
     address public manager;
     address[] public players;
+    mapping(address => bool) playersMap;
 
     function Lottery() public {
         manager = msg.sender;
@@ -16,18 +17,27 @@ contract Lottery {
     function enter() public payable {
         // Validation for minimum ether required (The user won't know why it fails)
         require(msg.value >= .01 ether);
+        // Ensure that the account has not entered the lottery before
+        require(playersMap[msg.sender] == false);
         // Push the person that enters into the players array
         players.push(msg.sender);
+        // Push the person to the playersMap mapping
+        playersMap[msg.sender] = true;
     }
     // Manager to pick a winner
-    function pickWinner() public restrictedToManger {
+    function pickWinner() public restrictedToManger returns(address) {
         // Start to pick winner
         uint index = random() % players.length;
         address winner = players[index];
         // Transfer all the ether that exist in the contract to the winner
         winner.transfer(this.balance);
+        // Reset the mapping
+        for (uint i=0; i< players.length ; i++){
+            playersMap[players[i]] = false;
+        }
         // Reset the players array to an empty array
         players = new address[](0);
+        return winner;
     }
     // Randomly generate a huge number
     function random() private view returns(uint) {
