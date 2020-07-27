@@ -3,6 +3,7 @@ pragma solidity ^0.4.17;
 
 contract Lottery {
     address public manager;
+    address public currentWinner;
     address[] public players;
     mapping(address => bool) playersMap;
 
@@ -25,19 +26,19 @@ contract Lottery {
         playersMap[msg.sender] = true;
     }
     // Manager to pick a winner
-    function pickWinner() public restrictedToManger returns(address) {
+    function pickWinner() public restrictedToManger {
         // Start to pick winner
         uint index = random() % players.length;
         address winner = players[index];
+        currentWinner = winner;
         // Transfer all the ether that exist in the contract to the winner
         winner.transfer(this.balance);
         // Reset the mapping
-        for (uint i=0; i< players.length ; i++){
+        for (uint i = 0; i < players.length; i++){
             playersMap[players[i]] = false;
         }
         // Reset the players array to an empty array
         players = new address[](0);
-        return winner;
     }
     // Randomly generate a huge number
     function random() private view returns(uint) {
