@@ -3,7 +3,7 @@ const Web3 = require('web3');
 const { interface, bytecode } = require('./compile');
 
 const provider = new HDWalletProvider(
-    // insert mnemonic,
+    // Insert mneomonic,
     'https://rinkeby.infura.io/v3/39c513ed58d6483ca3323b789152bbfa'
 );
 
